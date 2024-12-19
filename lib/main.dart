@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-
-import 'view/dashboard.dart'; // Import the dashboard screen
-import 'view/login_screen.dart'; // Import the login screen
-import 'view/signup_screen.dart'; // Import the signup screen
+import 'package:smoothie_plays_mobile/core/common/theme.dart';
+import 'package:smoothie_plays_mobile/view/dashboard.dart';
+import 'package:smoothie_plays_mobile/view/login_screen.dart';
+import 'package:smoothie_plays_mobile/view/signup_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,12 +12,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter App',
-      initialRoute: '/',
+      title: 'My App',
+      theme: AppTheme.lightTheme(),
+      initialRoute: '/login',
       routes: {
-        '/': (context) => LoginScreen(),
+        '/login': (context) => LoginScreen(),
         '/signup': (context) => SignUpScreen(),
-        '/dashboard': (context) => Dashboard(),
+        '/dashboard': (context) => DashboardScreen(),
       },
     );
   }

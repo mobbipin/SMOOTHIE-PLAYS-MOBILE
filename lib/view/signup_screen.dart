@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// ignore: unused_import
+import 'package:smoothie_plays_mobile/core/common/theme.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -13,8 +15,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _signUp() {
     if (_passwordController.text == _confirmPasswordController.text) {
-      // Handle signup logic here
-      Navigator.pop(context); // Go back to login screen
+      Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Passwords do not match")));
@@ -33,11 +34,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               controller: _emailController,
               decoration: InputDecoration(labelText: 'Email'),
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(labelText: 'Password'),
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _confirmPasswordController,
               obscureText: true,

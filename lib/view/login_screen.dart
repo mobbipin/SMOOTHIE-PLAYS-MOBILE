@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// ignore: unused_import
+import 'package:smoothie_plays_mobile/core/common/theme.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -29,12 +31,17 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email or Username'),
+              decoration: InputDecoration(
+                labelText: 'Email or Username',
+              ),
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _passwordController,
               obscureText: true,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: InputDecoration(
+                labelText: 'Password',
+              ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
