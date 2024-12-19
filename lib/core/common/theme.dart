@@ -3,60 +3,60 @@ import 'package:flutter/material.dart';
 class AppTheme {
   static ThemeData lightTheme() {
     return ThemeData(
-      primaryColor: Color(0xFF800000), // Maroon color for primary elements
+      primaryColor: Color(0xFF800000), // Marron color
       colorScheme: ColorScheme.light(
-        primary: Color(0xFF800000), // Maroon primary color
-        secondary: Color(0xFF9B1B30), // Secondary color (optional)
+        primary: Color(0xFF800000), // Marron color
+        secondary: Color(0xFF9B1B30), // Secondary color
       ),
-      scaffoldBackgroundColor: Colors.white,
+      scaffoldBackgroundColor:
+          Colors.white, // Default white background for all screens
       textTheme: TextTheme(
-        headline1: TextStyle(
+        displayLarge: TextStyle(
           fontFamily: 'Montserrat',
           fontSize: 32,
-          fontWeight: FontWeight.w900, // Black weight for bold headings
-          color: Colors.black,
+          fontWeight: FontWeight.w900, // Bold for large display text
+          color: Colors.black, // Black text color
         ),
-        headline2: TextStyle(
+        displayMedium: TextStyle(
           fontFamily: 'Montserrat',
           fontSize: 24,
-          fontWeight: FontWeight.w700, // Bold weight for sub-headings
+          fontWeight: FontWeight.w700, // Bold for medium-sized text
           color: Colors.black,
         ),
-        bodyText1: TextStyle(
-          fontFamily: 'Montserrat', // Font family
+        bodyLarge: TextStyle(
+          fontFamily: 'Montserrat',
           fontSize: 16,
-          fontWeight: FontWeight.w400, // Regular weight
+          fontWeight: FontWeight.w400, // Regular weight for body text
           color: Colors.black,
         ),
-        bodyText2: TextStyle(
+        bodyMedium: TextStyle(
           fontFamily: 'Montserrat',
           fontSize: 14,
-          fontWeight: FontWeight.w300, // Light weight
+          fontWeight: FontWeight.w300, // Light weight for small text
           color: Colors.black.withOpacity(0.6),
         ),
-        subtitle1: TextStyle(
+        titleMedium: TextStyle(
           fontFamily: 'Montserrat',
           fontSize: 18,
-          fontWeight: FontWeight.w400, // Regular weight for subtitles
-          fontStyle: FontStyle.italic, // Italic style for subtitles
+          fontWeight: FontWeight.w400, // Regular weight for titles
+          fontStyle: FontStyle.italic,
           color: Colors.black.withOpacity(0.8),
         ),
-        button: TextStyle(
+        labelLarge: TextStyle(
           fontFamily: 'Montserrat',
           fontSize: 16,
-          fontWeight: FontWeight.w700, // Bold weight for buttons
-          color: Colors.white, // Button text color (optional)
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
         ),
       ),
       buttonTheme: ButtonThemeData(
-        buttonColor: Color(0xFF800000), // Maroon button color
+        buttonColor: Color(0xFF800000), // Marron color for buttons
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide:
-              BorderSide(color: Color(0xFF800000)), // Maroon border color
+          borderSide: BorderSide(color: Color(0xFF800000)),
         ),
         labelStyle: TextStyle(
           fontFamily: 'Montserrat',
