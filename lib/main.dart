@@ -1,28 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:smoothie_plays_mobile/core/common/theme.dart';
-import 'package:smoothie_plays_mobile/view/dashboard.dart';
-import 'package:smoothie_plays_mobile/view/entrance_screen.dart';
-import 'package:smoothie_plays_mobile/view/login_screen.dart';
-import 'package:smoothie_plays_mobile/view/signup_screen.dart';
+import 'package:smoothie_plays_mobile/presentation/splash/pages/splash.dart';
+
+import 'core/configs /theme/app_theme.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Smoothie Plays ',
+      theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
-      title: 'Smoothie Plays',
-      theme: AppTheme.lightTheme(),
-      initialRoute: '/entrance',
-      routes: {
-        '/entrance': (context) => EntranceScreen(),
-        '/login': (context) => LoginScreen(),
-        '/signup': (context) => SignUpScreen(),
-        '/dashboard': (context) => DashboardScreen(),
-      },
+      home: const SplashPage(),
     );
   }
 }
