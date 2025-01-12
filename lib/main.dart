@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Smoothie Plays ',
+      title: 'Smoothie Plays : ',
       theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
       home: const SplashPage(),
