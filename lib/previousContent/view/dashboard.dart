@@ -6,6 +6,8 @@ import 'profile_screen.dart';
 import 'search_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
+
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
 }
@@ -13,7 +15,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
 
-  static List<Widget> _widgetOptions = <Widget>[
+  static final List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     SearchScreen(),
     LibraryScreen(),

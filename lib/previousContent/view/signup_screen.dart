@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
+
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -101,8 +103,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _signUp,
-                  child: Text('Sign Up',
-                      style: TextStyle(fontSize: 16, color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(double.infinity, 50),
                     backgroundColor: Color(0xFF800000),
@@ -110,6 +110,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
+                  child: Text('Sign Up',
+                      style: TextStyle(fontSize: 16, color: Colors.white)),
                 ),
                 SizedBox(height: 16),
                 TextButton(

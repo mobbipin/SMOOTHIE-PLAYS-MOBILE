@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -81,8 +83,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Login button
                 ElevatedButton(
                   onPressed: _login,
-                  child: Text('Login',
-                      style: TextStyle(fontSize: 16, color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(double.infinity, 50),
                     backgroundColor: Color(0xFF800000),
@@ -90,6 +90,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
+                  child: Text('Login',
+                      style: TextStyle(fontSize: 16, color: Colors.white)),
                 ),
                 SizedBox(height: 16),
 
