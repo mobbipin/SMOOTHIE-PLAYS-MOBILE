@@ -15,7 +15,7 @@ abstract class AuthService {
 }
 
 class AuthServiceImpl extends AuthService {
-  final String apiUrl = 'https://your-api-url.com'; // Your MERN API base URL
+  final String apiUrl = 'http://localhost:5000/api/auth';
 
   @override
   Future<Either<String, String>> signup(CreateUserReq createUserReq) async {

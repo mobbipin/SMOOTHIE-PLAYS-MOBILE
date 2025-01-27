@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/assets/app_vectors.dart';
-import 'package:smoothie_plays_mobile/presentation/intro/pages/get_started.dart';
+import 'package:smoothie_plays_mobile/presentation/auth/pages/signup_or_siginin.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -30,7 +30,7 @@ class _SplashPageState extends State<SplashPage> {
       context,
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            const GetStartedPage(),
+            const SignupOrSigninPage(),
       ),
     );
   }

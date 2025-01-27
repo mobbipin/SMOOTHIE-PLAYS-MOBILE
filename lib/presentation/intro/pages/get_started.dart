@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smoothie_plays_mobile/common/widgets/button/app_button.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/assets/app_image.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/theme/app_colors.dart';
+import 'package:smoothie_plays_mobile/presentation/auth/pages/signup_or_siginin.dart'; // Ensure correct import
 
 class GetStartedPage extends StatelessWidget {
   const GetStartedPage({super.key});
@@ -13,8 +14,6 @@ class GetStartedPage extends StatelessWidget {
         children: [
           Container(
             padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
-            // width: double.infinity,
-            // height: double.infinity,
             decoration: BoxDecoration(
                 image: DecorationImage(
                     fit: BoxFit.fill,
@@ -44,7 +43,7 @@ class GetStartedPage extends StatelessWidget {
                 ),
                 SizedBox(height: 21),
                 Text(
-                  'Welcome to the ultimate music streaming app . Get along with your favourite music at your hand. Stay tuned for new music',
+                  'Welcome to the ultimate music streaming app. Get along with your favourite music at your hand. Stay tuned for new music.',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: AppColors.grey,
@@ -54,16 +53,23 @@ class GetStartedPage extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 AppButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    print('Button Pressed'); // Debugging the button press
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SignupOrSigninPage(),
+                      ),
+                    );
+                  },
                   title: 'Get Started',
                 ),
               ],
             ),
           ),
           Container(
-            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.15),
-          )
+          ),
         ],
       ),
     );
