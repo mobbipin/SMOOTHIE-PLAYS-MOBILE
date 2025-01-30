@@ -2,11 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:smoothie_plays_mobile/common/widgets/appbar/app_bar.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/assets/app_vectors.dart';
-import 'package:smoothie_plays_mobile/data/datasources/local/auth_local_data_source.dart';
-import 'package:smoothie_plays_mobile/data/repository/auth_repository_impl.dart.dart';
+import 'package:smoothie_plays_mobile/data/datasources/remote/auth_remote_datasource.dart';
+import 'package:smoothie_plays_mobile/data/repository/auth_remote_repository_impl.dart';
 import 'package:smoothie_plays_mobile/domain/usecases/auth/signup_usecase.dart';
 import 'package:smoothie_plays_mobile/presentation/auth/pages/signin.dart';
 
@@ -26,9 +27,14 @@ class _SignupPageState extends State<SignupPage> {
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
 
-  final AuthLocalDataSource localDataSource = AuthLocalDataSource();
-  late final AuthLocalRepositoryImpl authRepository =
-      AuthLocalRepositoryImpl(localDataSource: localDataSource);
+  // Use the remote data source
+  final AuthRemoteDataSource remoteDataSource =
+      AuthRemoteDataSource(client: http.Client());
+
+  // Change the repository to use the remote source
+  late final AuthRemoteRepositoryImpl authRepository =
+      AuthRemoteRepositoryImpl(remoteDataSource: remoteDataSource);
+
   late final SignupUseCase signupUseCase =
       SignupUseCase(repository: authRepository);
 
