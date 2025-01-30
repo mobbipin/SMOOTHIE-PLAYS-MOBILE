@@ -18,6 +18,7 @@ class AuthLocalRepositoryImpl implements AuthRepository {
       username: user.username,
       fullName: user.fullName,
       photo: user.photo,
+      token: '',
     );
   }
 
@@ -46,6 +47,7 @@ class AuthLocalRepositoryImpl implements AuthRepository {
       username: newUser.username,
       fullName: newUser.fullName,
       photo: newUser.photo,
+      token: '',
     );
   }
 }
