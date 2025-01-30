@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smoothie_plays_mobile/previousContent/view/login_screen.dart';
+import 'package:smoothie_plays_mobile/aaa/view/login_screen.dart';
 
 class EntranceScreen extends StatefulWidget {
   const EntranceScreen({super.key});

@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    labelText: 'Email or Username',
+                    labelText: 'Email or email',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.email),
                   ),

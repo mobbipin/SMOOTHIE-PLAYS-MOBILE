@@ -8,11 +8,11 @@ class AuthRemoteRepositoryImpl implements AuthRepository {
   AuthRemoteRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<AuthEntity> login(String username, String password) async {
-    final authModel = await remoteDataSource.login(username, password);
+  Future<AuthEntity> login(String email, String password) async {
+    final authModel = await remoteDataSource.login(email, password);
     return AuthEntity(
       userId: authModel.userId ?? '',
-      username: authModel.username,
+      email: authModel.email,
       fullName: authModel.fullName,
       photo: authModel.photo,
       token: authModel.accessToken ?? '',
@@ -21,20 +21,20 @@ class AuthRemoteRepositoryImpl implements AuthRepository {
 
   @override
   Future<AuthEntity> signup(
-    String username,
+    String email,
     String fullName,
     String password,
     String photo,
   ) async {
     final authModel = await remoteDataSource.signup(
-      username: username,
+      email: email,
       fullName: fullName,
       password: password,
       photo: photo,
     );
     return AuthEntity(
       userId: authModel.userId ?? '',
-      username: authModel.username,
+      email: authModel.email,
       fullName: authModel.fullName,
       photo: authModel.photo,
       token: authModel.accessToken ?? '',

@@ -9,13 +9,13 @@ class AuthLocalRepositoryImpl implements AuthRepository {
   AuthLocalRepositoryImpl({required this.localDataSource});
 
   @override
-  Future<AuthEntity> login(String username, String password) async {
-    final user = await localDataSource.getUserByUsername(username);
+  Future<AuthEntity> login(String email, String password) async {
+    final user = await localDataSource.getUserByemail(email);
     if (user == null) throw Exception('User not found');
     if (user.password != password) throw Exception('Invalid password');
     return AuthEntity(
       userId: user.userId,
-      username: user.username,
+      email: user.email,
       fullName: user.fullName,
       photo: user.photo,
       token: '',
@@ -24,18 +24,18 @@ class AuthLocalRepositoryImpl implements AuthRepository {
 
   @override
   Future<AuthEntity> signup(
-    String username,
+    String email,
     String fullName,
     String password,
     String photo,
   ) async {
-    if (await localDataSource.usernameExists(username)) {
-      throw Exception('Username already exists');
+    if (await localDataSource.emailExists(email)) {
+      throw Exception('email already exists');
     }
 
     final newUser = AuthHiveModel(
       userId: DateTime.now().microsecondsSinceEpoch.toString(),
-      username: username,
+      email: email,
       fullName: fullName,
       password: password,
       photo: photo,
@@ -44,7 +44,7 @@ class AuthLocalRepositoryImpl implements AuthRepository {
     await localDataSource.saveUser(newUser);
     return AuthEntity(
       userId: newUser.userId,
-      username: newUser.username,
+      email: newUser.email,
       fullName: newUser.fullName,
       photo: newUser.photo,
       token: '',

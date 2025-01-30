@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
+import 'package:smoothie_plays_mobile/aaa/view/dashboard.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/assets/app_vectors.dart';
 import 'package:smoothie_plays_mobile/data/datasources/remote/auth_remote_datasource.dart';
 import 'package:smoothie_plays_mobile/data/repository/auth_remote_repository_impl.dart';
 import 'package:smoothie_plays_mobile/domain/usecases/auth/login_usecase.dart';
 import 'package:smoothie_plays_mobile/presentation/auth/pages/signup.dart';
-import 'package:smoothie_plays_mobile/previousContent/view/dashboard.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});

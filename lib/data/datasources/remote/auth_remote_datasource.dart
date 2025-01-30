@@ -24,7 +24,7 @@ class AuthRemoteDataSource {
   }
 
   Future<AuthApiModel> signup({
-    required String username,
+    required String email,
     required String fullName,
     required String password,
     required String photo,
@@ -32,13 +32,15 @@ class AuthRemoteDataSource {
     final response = await client.post(
       Uri.parse(ApiEndpoints.signup),
       body: jsonEncode({
-        'username': username,
+        'email': email,
         'fullName': fullName,
         'password': password,
         'photo': photo,
       }),
       headers: {'Content-Type': 'application/json'},
     );
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
 
     if (response.statusCode == 201) {
       return AuthApiModel.fromJson(jsonDecode(response.body));

@@ -76,7 +76,7 @@ class _SignupPageState extends State<SignupPage> {
 
     try {
       final user = await signupUseCase.execute(
-        username: _email.text.trim(),
+        email: _email.text.trim(),
         fullName: _fullName.text.trim(),
         password: _password.text.trim(),
         photo: _profileImage?.path ?? 'lib/common/images/defaultphoto.jpg',

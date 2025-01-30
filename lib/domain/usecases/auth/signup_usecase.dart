@@ -7,11 +7,11 @@ class SignupUseCase {
   SignupUseCase({required this.repository});
 
   Future<AuthEntity> execute({
-    required String username,
+    required String email,
     required String fullName,
     required String password,
     required String photo,
   }) async {
-    return await repository.signup(username, fullName, password, photo);
+    return await repository.signup(email, fullName, password, photo);
   }
 }

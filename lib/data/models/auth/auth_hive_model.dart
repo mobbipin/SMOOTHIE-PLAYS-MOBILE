@@ -8,7 +8,7 @@ class AuthHiveModel {
   final String userId;
 
   @HiveField(1)
-  final String username;
+  final String email;
 
   @HiveField(2)
   final String fullName;
@@ -21,7 +21,7 @@ class AuthHiveModel {
 
   AuthHiveModel({
     required this.userId,
-    required this.username,
+    required this.email,
     required this.fullName,
     required this.password,
     required this.photo,
