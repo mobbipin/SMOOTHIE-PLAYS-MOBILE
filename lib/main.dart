@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:smoothie_plays_mobile/data/models/auth/auth_hive_model.dart';
 import 'package:smoothie_plays_mobile/presentation/splash/pages/splash.dart';
 
 import 'core/configs /theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive
   await Hive.initFlutter();
-  await Hive.openBox('userBox'); // Open a Hive box for storing user data
+  Hive.registerAdapter(AuthHiveModelAdapter());
+
+  // Open auth box
+  await Hive.openBox<AuthHiveModel>('authBox');
+
   runApp(MyApp());
 }
 

@@ -1,11 +1,11 @@
-import 'package:dartz/dartz.dart';
-import 'package:smoothie_plays_mobile/data/models/auth/create_user.dart';
-import 'package:smoothie_plays_mobile/data/models/auth/signin_user_req.dart';
+import 'package:smoothie_plays_mobile/domain/entities/auth/auth_entity.dart';
 
 abstract class AuthRepository {
-  Future<Either> signup(CreateUserReq createUserReq);
-
-  Future<Either> signin(SigninUserReq signinUserReq);
-
-  Future<Either> getUser();
+  Future<AuthEntity> login(String username, String password);
+  Future<AuthEntity> signup(
+    String username,
+    String fullName,
+    String password,
+    String photo,
+  );
 }
