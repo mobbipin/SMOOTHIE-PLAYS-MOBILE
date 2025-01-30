@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'auth_api_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class AuthApiModel {
   @JsonKey(name: '_id')
   final String? userId;
@@ -11,7 +11,7 @@ class AuthApiModel {
   final String? password;
   final String photo;
 
-  // Fields you expect from the API (e.g., tokens)
+  // Add these fields if your API returns them
   final String? accessToken;
   final String? refreshToken;
 
@@ -25,6 +25,7 @@ class AuthApiModel {
     this.refreshToken,
   });
 
+  // Add these two methods
   factory AuthApiModel.fromJson(Map<String, dynamic> json) =>
       _$AuthApiModelFromJson(json);
 
