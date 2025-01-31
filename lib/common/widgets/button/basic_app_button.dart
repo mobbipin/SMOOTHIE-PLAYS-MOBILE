@@ -4,8 +4,12 @@ class BasicAppButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String title;
   final double? height;
-  const BasicAppButton(
-      {required this.onPressed, required this.title, this.height, super.key});
+  const BasicAppButton({
+    required this.onPressed,
+    required this.title,
+    this.height,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

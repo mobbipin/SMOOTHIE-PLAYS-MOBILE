@@ -47,7 +47,7 @@ class SignupOrSigninPage extends StatelessWidget {
                       height: 21,
                     ),
                     const Text(
-                      'Spotify is a proprietary Swedish audio streaming and media services provider ',
+                      'Spotify is where SmoothiePlays was inspired from ',
                       style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 13,
@@ -62,14 +62,15 @@ class SignupOrSigninPage extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: BasicAppButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            SignupPage()));
-                              },
-                              title: 'Register'),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          SignupPage()));
+                            },
+                            title: 'Register',
+                          ),
                         ),
                         const SizedBox(
                           width: 20,

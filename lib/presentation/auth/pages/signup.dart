@@ -41,13 +41,47 @@ class _SignupPageState extends State<SignupPage> {
       SignupUseCase(repository: authRepository);
 
   Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final action = await _showImageSourceDialog();
+    if (action == null) return; // If no action is selected, return.
+
+    final ImagePicker _picker = ImagePicker();
+
+    // Use the selected image source (camera or gallery)
+    final pickedFile = await _picker.pickImage(source: action);
     if (pickedFile != null) {
       setState(() {
         _profileImage = File(pickedFile.path);
       });
     }
+  }
+
+  // Show dialog to choose between Camera or Gallery
+  Future<ImageSource?> _showImageSourceDialog() {
+    return showDialog<ImageSource>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Select Image Source'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text('Camera'),
+                onTap: () {
+                  Navigator.pop(context, ImageSource.camera);
+                },
+              ),
+              ListTile(
+                title: const Text('Gallery'),
+                onTap: () {
+                  Navigator.pop(context, ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   String? _validateEmail(String? value) {
