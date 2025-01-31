@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smoothie_plays_mobile/common/widgets/button/app_button.dart';
+import 'package:smoothie_plays_mobile/common/widgets/button/basic_app_button.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/assets/app_image.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/theme/app_colors.dart';
 import 'package:smoothie_plays_mobile/presentation/auth/pages/signup_or_siginin.dart'; // Ensure correct import
@@ -52,7 +52,7 @@ class GetStartedPage extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 20),
-                AppButton(
+                BasicAppButton(
                   onPressed: () {
                     print('Button Pressed'); // Debugging the button press
                     Navigator.pushReplacement(

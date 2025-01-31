@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:smoothie_plays_mobile/common/widgets/appbar/app_bar.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/assets/app_vectors.dart';
 import 'package:smoothie_plays_mobile/data/datasources/remote/auth_remote_datasource.dart';
 import 'package:smoothie_plays_mobile/data/repository/auth_remote_repository_impl.dart';
@@ -26,6 +25,9 @@ class _SignupPageState extends State<SignupPage> {
   File? _profileImage;
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
+
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
   // Use the remote data source
   final AuthRemoteDataSource remoteDataSource =
@@ -109,7 +111,7 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: _siginText(context),
-      appBar: BasicAppbar(
+      appBar: AppBar(
         title: SvgPicture.asset(
           AppVectors.logo,
           height: 40,
@@ -117,11 +119,13 @@ class _SignupPageState extends State<SignupPage> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 25),
+        padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 30),
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // Profile Image Picker
               GestureDetector(
                 onTap: _pickImage,
                 child: CircleAvatar(
@@ -141,52 +145,95 @@ class _SignupPageState extends State<SignupPage> {
               const Text('Tap to add profile picture',
                   style: TextStyle(color: Colors.grey)),
               const SizedBox(height: 30),
+
+              // Full Name Field
               TextFormField(
                 controller: _fullName,
                 decoration: const InputDecoration(
-                  labelText: 'Full Name',
-                  prefixIcon: Icon(Icons.person),
-                  border: OutlineInputBorder(),
+                  hintText: 'Full Name',
+                  contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
                 ),
                 validator: (value) =>
                     value?.isEmpty ?? true ? 'Full name is required' : null,
               ),
               const SizedBox(height: 20),
+
+              // Email Field
               TextFormField(
                 controller: _email,
                 decoration: const InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: Icon(Icons.email),
-                  border: OutlineInputBorder(),
+                  hintText: 'Enter Email',
+                  contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
                 ),
                 validator: _validateEmail,
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 20),
+
+              // Password Field with Toggle
               TextFormField(
                 controller: _password,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  prefixIcon: Icon(Icons.lock),
-                  border: OutlineInputBorder(),
-                  helperText: 'At least 8 characters with 1 uppercase',
+                obscureText: !_isPasswordVisible,
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 15),
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
                 ),
                 validator: _validatePassword,
               ),
               const SizedBox(height: 20),
+
+              // Confirm Password Field with Toggle
               TextFormField(
                 controller: _confirmPassword,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Confirm Password',
-                  prefixIcon: Icon(Icons.lock_outline),
-                  border: OutlineInputBorder(),
+                obscureText: !_isConfirmPasswordVisible,
+                decoration: InputDecoration(
+                  hintText: 'Confirm Password',
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 15),
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isConfirmPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                      });
+                    },
+                  ),
                 ),
                 validator: (value) =>
                     value != _password.text ? 'Passwords do not match' : null,
               ),
               const SizedBox(height: 30),
+
+              // Sign Up Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -199,7 +246,7 @@ class _SignupPageState extends State<SignupPage> {
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text('CREATE ACCOUNT',
-                          style: TextStyle(fontSize: 16)),
+                          style: TextStyle(fontSize: 16, color: Colors.white)),
                 ),
               ),
             ],
@@ -210,21 +257,23 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Widget _siginText(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 30),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text("Already have an account? ",
-              style: TextStyle(color: Colors.grey)),
-          TextButton(
-            onPressed: () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const SigninPage()),
-            ),
-            child: const Text('Sign In',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            'Do you have an account? ',
+            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
           ),
+          TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SigninPage()),
+                );
+              },
+              child: const Text('Sign In'))
         ],
       ),
     );

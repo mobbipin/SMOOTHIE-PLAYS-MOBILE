@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:smoothie_plays_mobile/core/configs%20/assets/app_image.dart';
+import 'package:smoothie_plays_mobile/common/mode/is_dark_mode.dart';
+import 'package:smoothie_plays_mobile/common/widgets/button/basic_app_button.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/assets/app_vectors.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/theme/app_colors.dart';
 import 'package:smoothie_plays_mobile/presentation/auth/pages/signin.dart';
@@ -19,15 +20,12 @@ class SignupOrSigninPage extends StatelessWidget {
           const BasicAppbar(),
           Align(
             alignment: Alignment.topRight,
-            child: SvgPicture.asset(AppVectors.logo),
+            child: SvgPicture.asset(AppVectors.topPattern),
           ),
           Align(
             alignment: Alignment.bottomRight,
-            child: SvgPicture.asset(AppVectors.logo),
+            child: SvgPicture.asset(AppVectors.bottomPattern),
           ),
-          Align(
-              alignment: Alignment.bottomLeft,
-              child: Image.asset(AppImages.introBG)),
           Align(
               alignment: Alignment.center,
               child: Padding(
@@ -63,26 +61,15 @@ class SignupOrSigninPage extends StatelessWidget {
                       children: [
                         Expanded(
                           flex: 1,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          SignupPage()));
-                            },
-                            child: const Text('Register'),
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 50),
-                              backgroundColor: Theme.of(context).primaryColor,
-                              textStyle: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                          ),
+                          child: BasicAppButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            SignupPage()));
+                              },
+                              title: 'Register'),
                         ),
                         const SizedBox(
                           width: 20,
@@ -90,21 +77,22 @@ class SignupOrSigninPage extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          SigninPage()));
-                            },
-                            child: const Text(
-                              'Sign in',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            SigninPage()));
+                              },
+                              child: Text(
+                                'Sign in',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: context.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black),
+                              )),
                         )
                       ],
                     )

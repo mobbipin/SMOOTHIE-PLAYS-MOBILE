@@ -21,6 +21,7 @@ class _SigninPageState extends State<SigninPage> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   bool _isLoading = false;
+  bool _obscurePassword = true;
   final _formKey = GlobalKey<FormState>();
 
   // Use the remote data source for authentication
@@ -38,6 +39,11 @@ class _SigninPageState extends State<SigninPage> {
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
       return 'Invalid email format';
     }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) return 'Password is required';
     return null;
   }
 
@@ -97,42 +103,71 @@ class _SigninPageState extends State<SigninPage> {
           width: 40,
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 25),
-        child: Center(
+      body: Center(
+        // Center the UI
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 30),
           child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: 400,
-            ),
+            constraints: BoxConstraints(maxWidth: 400),
             child: Form(
               key: _formKey,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  const Text(
+                    'Sign In',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 50),
+                  // Email field
                   TextFormField(
                     controller: _email,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email),
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      hintText: 'Enter Email',
+                      border: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(12), // Rounded corner
+                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 14, horizontal: 12),
                     ),
                     validator: _validateEmail,
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 20),
+                  // Password field with toggle visibility
                   TextFormField(
                     controller: _password,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock),
-                      border: OutlineInputBorder(),
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
+                      hintText: 'Password',
+                      border: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(12), // Rounded corner
+                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
                     ),
-                    validator: (value) =>
-                        value?.isEmpty ?? true ? 'Password is required' : null,
+                    validator: _validatePassword,
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
+                  // Sign In button (adjust width)
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -140,15 +175,18 @@ class _SigninPageState extends State<SigninPage> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       child: _isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text('SIGN IN',
-                              style: TextStyle(fontSize: 16)),
+                          : const Text('Sign In',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white)),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
+                  // Forgot Password Button
                   TextButton(
                     onPressed: () {},
                     child: const Text('Forgot Password?'),
@@ -163,20 +201,24 @@ class _SigninPageState extends State<SigninPage> {
   }
 
   Widget _signupText(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 30),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text("Don't have an account? ",
-              style: TextStyle(color: Colors.grey)),
+          const Text(
+            "Don't have an account? ",
+            style: TextStyle(color: Colors.grey),
+          ),
           TextButton(
             onPressed: () => Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const SignupPage()),
             ),
-            child: const Text('Register Now',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text(
+              'Register Now',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
