@@ -1,83 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:smoothie_plays_mobile/data/models/auth/auth_api_model.dart';
+import 'package:smoothie_plays_mobile/presentation/auth/pages/signin.dart'; // Ensure to import SigninPage for navigation
 
-class SettingScreen extends StatelessWidget {
-  const SettingScreen({super.key});
+class ProfileScreen extends StatelessWidget {
+  final AuthApiModel user; // Accept the user data
+
+  const ProfileScreen({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Settings"),
-        backgroundColor: Color(0xFF2F2F2F),
+        title: Text('Profile'),
+        backgroundColor: Color(0xFF800000),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () => _logout(context), // Logout when pressed
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
+        child: Column(
           children: [
-            ListTile(
-              leading: CircleAvatar(
-                backgroundImage: AssetImage("images/logosmall.png"),
-              ),
-              title: Text(
-                "Profile",
-                style: TextStyle(
-                  fontFamily: "Montserrat",
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              subtitle: Text("View and edit your profile"),
-              onTap: () {},
+            // Display profile picture and name
+            CircleAvatar(
+              radius: 50,
+              backgroundImage: NetworkImage(user.photo), // User's photo
             ),
-            Divider(),
-            ListTile(
-              leading: Icon(Icons.notifications, color: Colors.white),
-              title: Text(
-                "Notifications",
-                style: TextStyle(
-                  fontFamily: "Montserrat",
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
+            const SizedBox(height: 16),
+            Text(
+              user.fullName, // User's full name
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
               ),
-              onTap: () {},
             ),
-            Divider(),
-            ListTile(
-              leading: Icon(Icons.language, color: Colors.white),
-              title: Text(
-                "Language",
-                style: TextStyle(
-                  fontFamily: "Montserrat",
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
+            const SizedBox(height: 8),
+            Text(
+              user.fullName, // User's email
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
               ),
-              onTap: () {},
             ),
-            Divider(),
-            ListTile(
-              leading: Icon(
-                Icons.logout,
-                color: Colors.white,
-              ),
-              title: Text(
-                "Logout",
-                style: TextStyle(
-                  fontFamily: "Montserrat",
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+            const SizedBox(height: 20),
+            // Add more profile data if needed
+            const SizedBox(height: 30),
+
+            // You can also add the logout functionality here
+            ElevatedButton(
+              onPressed: () => _logout(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF800000), // Match the app bar color
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              tileColor: Color(0xFF800000),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/login');
-              },
+              child: const Text(
+                'LOGOUT',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  // Handle logout
+  void _logout(BuildContext context) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const SigninPage()),
+      (route) => false, // Remove all previous routes
     );
   }
 }

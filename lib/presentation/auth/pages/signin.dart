@@ -4,7 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:smoothie_plays_mobile/aaa/view/dashboard.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/assets/app_vectors.dart';
 import 'package:smoothie_plays_mobile/data/datasources/remote/auth_remote_datasource.dart';
+import 'package:smoothie_plays_mobile/data/models/auth/auth_api_model.dart';
 import 'package:smoothie_plays_mobile/data/repository/auth_remote_repository_impl.dart';
+import 'package:smoothie_plays_mobile/domain/entities/auth/auth_entity.dart';
 import 'package:smoothie_plays_mobile/domain/usecases/auth/login_usecase.dart';
 import 'package:smoothie_plays_mobile/presentation/auth/pages/signup.dart';
 
@@ -25,7 +27,6 @@ class _SigninPageState extends State<SigninPage> {
   final AuthRemoteDataSource remoteDataSource =
       AuthRemoteDataSource(client: http.Client());
 
-  // Change the repository to use the remote source
   late final AuthRemoteRepositoryImpl authRepository =
       AuthRemoteRepositoryImpl(remoteDataSource: remoteDataSource);
 
@@ -40,21 +41,38 @@ class _SigninPageState extends State<SigninPage> {
     return null;
   }
 
+  // Method to convert AuthEntity to AuthApiModel
+  AuthApiModel _convertToAuthApiModel(AuthEntity user) {
+    return AuthApiModel(
+      userId: user.userId,
+      email: user.email,
+      fullName: user.fullName,
+      photo: user.photo,
+      // Add any other fields you need
+    );
+  }
+
   void _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
+      // Assuming 'user' here is of type AuthEntity
       final user = await loginUseCase.execute(
         _email.text.trim(),
         _password.text.trim(),
       );
 
+      // Convert AuthEntity to AuthApiModel
+      final authApiModel = _convertToAuthApiModel(user);
+
+      // Pass AuthApiModel to DashboardScreen
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const DashboardScreen()),
-        (route) => false,
+        MaterialPageRoute(
+            builder: (context) => DashboardScreen(user: authApiModel)),
+        (route) => false, // Remove all previous routes
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

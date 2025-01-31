@@ -1,73 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:smoothie_plays_mobile/data/models/auth/auth_api_model.dart';
+import 'package:smoothie_plays_mobile/presentation/auth/pages/signin.dart'; // Ensure to import SigninPage for navigation
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final AuthApiModel user; // Accept the user data
+
+  const ProfileScreen({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // White background for Profile screen
+      appBar: AppBar(
+        title: Text('Profile'),
+        backgroundColor: Color(0xFF800000),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () => _logout(context), // Logout when pressed
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Profile Picture
+            // Display profile picture and name
             CircleAvatar(
               radius: 50,
-              backgroundImage:
-                  AssetImage('assets/images/logosmall.png'), // Profile image
+              backgroundImage: NetworkImage(user.photo), // User's photo
             ),
-            SizedBox(height: 16),
-            // Name
+            const SizedBox(height: 16),
             Text(
-              'John Doe',
-              style: Theme.of(context)
-                  .textTheme
-                  .displayMedium, // Use displayMedium for bold text
-            ),
-            SizedBox(height: 8),
-            // Job or Description
-            Text(
-              'Music Enthusiast',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium, // Regular text for description
-            ),
-            SizedBox(height: 16),
-            // Edit Profile Button
-            ElevatedButton(
-              onPressed: () {
-                // Add edit profile logic here
-              },
-              child: Text(
-                'Edit Profile',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge, // Regular font for button text
+              user.fullName, // User's full name
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 8),
+            Text(
+              user.email, // User's email
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Add more profile data if needed
+            const SizedBox(height: 30),
 
+            // You can also add the logout functionality here
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/login');
-              },
+              onPressed: () => _logout(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
-              ),
-              child: Text(
-                'Logout',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                backgroundColor: Color(0xFF800000), // Match the app bar color
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
+              ),
+              child: const Text(
+                'LOGOUT',
+                style: TextStyle(fontSize: 16),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  // Handle logout
+  void _logout(BuildContext context) {
+    // Clear the session or perform any necessary logout actions
+    // For example, you could clear the user's auth token or other session data here.
+
+    // Navigate back to SigninPage
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const SigninPage()),
+      (route) => false, // Remove all previous routes
     );
   }
 }

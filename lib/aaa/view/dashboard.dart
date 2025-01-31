@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:smoothie_plays_mobile/aaa/view/home_screen.dart';
+import 'package:smoothie_plays_mobile/aaa/view/library_screen.dart';
+import 'package:smoothie_plays_mobile/aaa/view/search_screen.dart';
+import 'package:smoothie_plays_mobile/data/models/auth/auth_api_model.dart';
 
-import 'home_screen.dart';
-import 'library_screen.dart';
-import 'profile_screen.dart';
-import 'search_screen.dart';
+import 'profile_screen.dart'; // Import ProfileScreen
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  final AuthApiModel user; // Expect the user data in the constructor
+
+  const DashboardScreen({super.key, required this.user}); // Pass user data
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
@@ -15,12 +18,20 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
 
-  static final List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
-    SearchScreen(),
-    LibraryScreen(),
-    ProfileScreen(),
-  ];
+  // You can initialize this list inside the build method
+  late List<Widget> _widgetOptions;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the list of widgets here, after the widget is fully initialized
+    _widgetOptions = <Widget>[
+      HomeScreen(),
+      SearchScreen(),
+      LibraryScreen(),
+      ProfileScreen(user: widget.user), // Pass the user data to ProfileScreen
+    ];
+  }
 
   void _onItemTapped(int index) {
     setState(() {
