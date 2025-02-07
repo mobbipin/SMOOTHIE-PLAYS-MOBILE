@@ -23,16 +23,14 @@ void main() {
   });
 
   test('should call repository.login once with correct parameters', () async {
-    // Arrange
-    final testEmail = 'test@example.com';
+    final testEmail = 'testiswrong@example.com';
     final testPassword = 'password123';
     when(() => mockAuthRepository.login(testEmail, testPassword))
         .thenAnswer((_) async => dummyAuthEntity);
 
-    // Act
-    await loginUseCase.execute(testEmail, testPassword);
+    await loginUseCase.execute(
+        'testiswrong@example.com', 'password123'); //faill
 
-    // Assert
     verify(() => mockAuthRepository.login(testEmail, testPassword)).called(1);
     verifyNoMoreInteractions(mockAuthRepository);
   });
@@ -40,16 +38,13 @@ void main() {
   test(
       'should return an AuthEntity with correct values when login is successful',
       () async {
-    // Arrange
     final testEmail = 'test@example.com';
     final testPassword = 'password123';
     when(() => mockAuthRepository.login(testEmail, testPassword))
         .thenAnswer((_) async => dummyAuthEntity);
 
-    // Act
     final result = await loginUseCase.execute(testEmail, testPassword);
 
-    // Assert (verify only the required fields, not photo)
     expect(result.userId, equals(dummyAuthEntity.userId));
     expect(result.email, equals(dummyAuthEntity.email));
     expect(result.fullName, equals(dummyAuthEntity.fullName));
@@ -57,13 +52,11 @@ void main() {
   });
 
   test('should throw an exception when repository.login throws', () async {
-    // Arrange
     final testEmail = 'test@example.com';
     final testPassword = 'password123';
     when(() => mockAuthRepository.login(testEmail, testPassword))
         .thenThrow(Exception('Login failed'));
 
-    // Act & Assert
     expect(() async => await loginUseCase.execute(testEmail, testPassword),
         throwsA(isA<Exception>()));
   });
@@ -71,7 +64,6 @@ void main() {
   test(
       'should handle empty email and password by returning the expected AuthEntity',
       () async {
-    // Arrange
     const emptyEmail = '';
     const emptyPassword = '';
     final dummyEmptyAuthEntity = AuthEntity(
@@ -84,10 +76,8 @@ void main() {
     when(() => mockAuthRepository.login(emptyEmail, emptyPassword))
         .thenAnswer((_) async => dummyEmptyAuthEntity);
 
-    // Act
     final result = await loginUseCase.execute(emptyEmail, emptyPassword);
 
-    // Assert (verify only the required fields, not photo)
     expect(result.userId, equals(dummyEmptyAuthEntity.userId));
     expect(result.email, equals(dummyEmptyAuthEntity.email));
     expect(result.fullName, equals(dummyEmptyAuthEntity.fullName));
@@ -96,16 +86,13 @@ void main() {
 
   test('should not call repository.login more than once per execute call',
       () async {
-    // Arrange
     final testEmail = 'test@example.com';
     final testPassword = 'password123';
     when(() => mockAuthRepository.login(testEmail, testPassword))
         .thenAnswer((_) async => dummyAuthEntity);
 
-    // Act
     await loginUseCase.execute(testEmail, testPassword);
 
-    // Assert
     verify(() => mockAuthRepository.login(testEmail, testPassword)).called(1);
     verifyNoMoreInteractions(mockAuthRepository);
   });
