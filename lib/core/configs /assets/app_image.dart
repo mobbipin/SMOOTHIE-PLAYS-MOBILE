@@ -7,4 +7,5 @@ class AppImages {
   static const String authBG = '${basePath}auth_bg.png';
   static const String basepath3 = 'assets/images/';
   static const logo = '${basepath3}logosmall.png ';
+  static const String homeArtist = '${basePath}home_artist.png';
 }
