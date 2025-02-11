@@ -5,7 +5,7 @@ import 'package:smoothie_plays_mobile/core/configs%20/assets/app_image.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/assets/app_vectors.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/theme/app_colors.dart';
 import 'package:smoothie_plays_mobile/data/models/auth/auth_api_model.dart';
-import 'package:smoothie_plays_mobile/presentation/profile/pages/profile.dart';
+import 'package:smoothie_plays_mobile/presentation/player/pages/player.dart';
 
 import '../../../common/widgets/appbar/app_bar.dart';
 
@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage>
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext context) => ProfilePage()),
+                  builder: (BuildContext context) => SongPlayerPage()),
             );
           },
           icon: const Icon(Icons.person, size: 30),
