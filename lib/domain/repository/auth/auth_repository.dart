@@ -1,11 +1,22 @@
+import 'dart:io';
+
 import 'package:smoothie_plays_mobile/domain/entities/auth/auth_entity.dart';
 
 abstract class AuthRepository {
-  Future<AuthEntity> login(String email, String password);
-  Future<AuthEntity> signup(
-    String email,
-    String fullName,
-    String password,
-    String photo,
-  );
+  Future<AuthEntity> emailSignup({
+    required String fullName,
+    required String email,
+    required String password,
+    File? photo,
+  });
+  Future<AuthEntity> emailLogin({
+    required String email,
+    required String password,
+  });
+  Future<AuthEntity> googleAuth({
+    required String id,
+    required String fullName,
+    required String email,
+    required String imageUrl,
+  });
 }

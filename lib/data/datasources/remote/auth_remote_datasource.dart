@@ -1,51 +1,102 @@
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:smoothie_plays_mobile/core/configs%20/constants/api_endpoints.dart';
 import 'package:smoothie_plays_mobile/data/models/auth/auth_api_model.dart';
 
-class AuthRemoteDataSource {
+abstract class AuthRemoteDataSource {
+  Future<AuthApiModel> emailSignup({
+    required String fullName,
+    required String email,
+    required String password,
+    required File? photo,
+  });
+  Future<AuthApiModel> emailLogin({
+    required String email,
+    required String password,
+  });
+  Future<AuthApiModel> googleAuth({
+    required String id,
+    required String fullName,
+    required String email,
+    required String imageUrl,
+  });
+}
+
+class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final http.Client client;
 
-  AuthRemoteDataSource({required this.client});
+  AuthRemoteDataSourceImpl({required this.client});
 
-  Future<AuthApiModel> signup({
-    required String email,
+  @override
+  Future<AuthApiModel> emailSignup({
     required String fullName,
+    required String email,
     required String password,
-    required String photo,
+    required File? photo,
   }) async {
     final uri = Uri.parse(ApiEndpoints.signup);
-    var request = http.MultipartRequest('POST', uri);
-
-    request.fields['email'] = email;
+    final request = http.MultipartRequest("POST", uri);
     request.fields['fullName'] = fullName;
+    request.fields['email'] = email;
     request.fields['password'] = password;
 
-    var file = await http.MultipartFile.fromPath('profileImage', photo);
-    request.files.add(file);
-
-    var response = await client.send(request);
-    var responseBody = await response.stream.bytesToString();
-
-    if (response.statusCode == 201) {
-      return AuthApiModel.fromJson(jsonDecode(responseBody)['user']);
+    if (photo != null) {
+      request.files.add(await http.MultipartFile.fromPath('photo', photo.path));
     } else {
-      throw Exception('Signup failed: ${responseBody}');
+      request.fields['photo'] = 'assets/images/defaultphoto.jpg';
+    }
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    if (response.statusCode == 201) {
+      final jsonResponse = json.decode(response.body);
+      return AuthApiModel.fromJson(jsonResponse);
+    } else {
+      throw Exception('Failed to sign up: ${response.body}');
     }
   }
 
-  Future<AuthApiModel> login(String email, String password) async {
+  @override
+  Future<AuthApiModel> emailLogin({
+    required String email,
+    required String password,
+  }) async {
     final response = await client.post(
       Uri.parse(ApiEndpoints.login),
-      body: jsonEncode({'email': email, 'password': password}),
       headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email, 'password': password}),
     );
-
     if (response.statusCode == 200) {
-      return AuthApiModel.fromJson(jsonDecode(response.body)['user']);
+      final jsonResponse = json.decode(response.body);
+      return AuthApiModel.fromJson(jsonResponse);
     } else {
-      throw Exception('Login failed: ${response.body}');
+      throw Exception('Failed to login: ${response.body}');
+    }
+  }
+
+  @override
+  Future<AuthApiModel> googleAuth({
+    required String id,
+    required String fullName,
+    required String email,
+    required String imageUrl,
+  }) async {
+    final response = await client.post(
+      Uri.parse(ApiEndpoints.googleCallback),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'id': id,
+        'fullName': fullName,
+        'email': email,
+        'imageUrl': imageUrl,
+      }),
+    );
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      return AuthApiModel.fromJson(jsonResponse);
+    } else {
+      throw Exception('Failed to authenticate with Google: ${response.body}');
     }
   }
 }

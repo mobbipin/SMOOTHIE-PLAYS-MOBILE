@@ -1,24 +1,22 @@
-import 'dart:io';
-
 import 'package:smoothie_plays_mobile/domain/entities/auth/auth_entity.dart';
 import 'package:smoothie_plays_mobile/domain/repository/auth/auth_repository.dart';
 
-class EmailSignupUseCase {
+class GoogleAuthUseCase {
   final AuthRepository repository;
 
-  EmailSignupUseCase({required this.repository});
+  GoogleAuthUseCase({required this.repository});
 
   Future<AuthEntity> execute({
+    required String id,
     required String fullName,
     required String email,
-    required String password,
-    File? photo,
+    required String imageUrl,
   }) {
-    return repository.emailSignup(
+    return repository.googleAuth(
+      id: id,
       fullName: fullName,
       email: email,
-      password: password,
-      photo: photo,
+      imageUrl: imageUrl,
     );
   }
 }

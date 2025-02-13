@@ -2,133 +2,125 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/assets/app_vectors.dart';
 import 'package:smoothie_plays_mobile/data/datasources/remote/auth_remote_datasource.dart';
 import 'package:smoothie_plays_mobile/data/repository/auth_remote_repository_impl.dart';
+import 'package:smoothie_plays_mobile/domain/entities/auth/auth_entity.dart';
+import 'package:smoothie_plays_mobile/domain/usecases/auth/goog_auth_usecase.dart';
 import 'package:smoothie_plays_mobile/domain/usecases/auth/signup_usecase.dart';
 import 'package:smoothie_plays_mobile/presentation/auth/pages/signin.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
-
+  const SignupPage({Key? key}) : super(key: key);
   @override
   State<SignupPage> createState() => _SignupPageState();
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final TextEditingController _fullName = TextEditingController();
-  final TextEditingController _email = TextEditingController();
-  final TextEditingController _password = TextEditingController();
-  final TextEditingController _confirmPassword = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   File? _profileImage;
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
 
-  bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
-
-  // Use the remote data source
-  final AuthRemoteDataSource remoteDataSource =
-      AuthRemoteDataSource(client: http.Client());
-
-  // Change the repository to use the remote source
+  // Data layer setup
+  final AuthRemoteDataSourceImpl remoteDataSource =
+      AuthRemoteDataSourceImpl(client: http.Client());
   late final AuthRemoteRepositoryImpl authRepository =
       AuthRemoteRepositoryImpl(remoteDataSource: remoteDataSource);
+  // Domain use cases
+  late final EmailSignupUseCase emailSignupUseCase =
+      EmailSignupUseCase(repository: authRepository);
+  late final GoogleAuthUseCase googleAuthUseCase =
+      GoogleAuthUseCase(repository: authRepository);
 
-  late final SignupUseCase signupUseCase =
-      SignupUseCase(repository: authRepository);
+  // GoogleSignIn instance
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
+  // Show a dialog to choose between Camera and Gallery.
   Future<void> _pickImage() async {
-    final action = await _showImageSourceDialog();
-    if (action == null) return; // If no action is selected, return.
-
-    final ImagePicker _picker = ImagePicker();
-
-    // Use the selected image source (camera or gallery)
-    final pickedFile = await _picker.pickImage(source: action);
-    if (pickedFile != null) {
-      setState(() {
-        _profileImage = File(pickedFile.path);
-      });
+    final source = await showDialog<ImageSource>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Select Image Source'),
+        content: const Text('Choose the image source:'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, ImageSource.camera);
+            },
+            child: const Text('Camera'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, ImageSource.gallery);
+            },
+            child: const Text('Gallery'),
+          ),
+        ],
+      ),
+    );
+    if (source != null) {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: source);
+      if (pickedFile != null) {
+        setState(() {
+          _profileImage = File(pickedFile.path);
+        });
+      }
     }
   }
 
-  // Show dialog to choose between Camera or Gallery
-  Future<ImageSource?> _showImageSourceDialog() {
-    return showDialog<ImageSource>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Select Image Source'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: const Text('Camera'),
-                onTap: () {
-                  Navigator.pop(context, ImageSource.camera);
-                },
-              ),
-              ListTile(
-                title: const Text('Gallery'),
-                onTap: () {
-                  Navigator.pop(context, ImageSource.gallery);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+  String? _validateFullName(String? value) {
+    if (value == null || value.isEmpty) return 'Full name is required';
+    return null;
   }
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) return 'Email is required';
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return 'Invalid email format';
+      return 'Enter a valid email address';
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) return 'Password is required';
-    if (value.length < 8) return 'Must be at least 8 characters';
-    if (!value.contains(RegExp(r'[A-Z]'))) return 'Needs 1 uppercase letter';
+    if (value.length < 6) {
+      return 'Password should be at least 6 characters';
+    }
     return null;
   }
 
-  void _handleSignup() async {
+  String? _validateConfirmPassword(String? value) {
+    if (value != _passwordController.text) return 'Passwords do not match';
+    return null;
+  }
+
+  void _handleEmailSignup() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_password.text != _confirmPassword.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
+    setState(() {
+      _isLoading = true;
+    });
     try {
-      final user = await signupUseCase.execute(
-        email: _email.text.trim(),
-        fullName: _fullName.text.trim(),
-        password: _password.text.trim(),
-        photo: _profileImage?.path ?? 'lib/common/images/defaultphoto.jpg',
+      final AuthEntity authEntity = await emailSignupUseCase.execute(
+        fullName: _fullNameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        photo: _profileImage,
       );
-
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Registration successful!'),
-          backgroundColor: Colors.green,
-        ),
+        SnackBar(
+            content: Text('Signup successful, Welcome ${authEntity.fullName}')),
       );
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const SigninPage()),
-      );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (_) => const SigninPage()));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -137,178 +129,167 @@ class _SignupPageState extends State<SignupPage> {
         ),
       );
     } finally {
-      setState(() => _isLoading = false);
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _handleGoogleSignup() async {
+    try {
+      final googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return;
+      final id = googleUser.id;
+      final fullName = googleUser.displayName ?? '';
+      final email = googleUser.email;
+      final imageUrl = googleUser.photoUrl ?? '';
+      final AuthEntity authEntity = await googleAuthUseCase.execute(
+        id: id,
+        fullName: fullName,
+        email: email,
+        imageUrl: imageUrl,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'Google signup successful, Welcome ${authEntity.fullName}')),
+      );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (_) => const SigninPage()));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Google signup failed: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: _siginText(context),
       appBar: AppBar(
-        title: SvgPicture.asset(
-          AppVectors.logo,
-          height: 40,
-          width: 40,
-        ),
+        title: SvgPicture.asset(AppVectors.logo, height: 40, width: 40),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 30),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Profile Image Picker
-              GestureDetector(
-                onTap: _pickImage,
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Colors.grey[200],
-                  backgroundImage: _profileImage != null
-                      ? FileImage(_profileImage!)
-                      : const AssetImage('assets/images/defaultphoto.jpg')
-                          as ImageProvider,
-                  child: _profileImage == null
-                      ? const Icon(Icons.camera_alt,
-                          size: 30, color: Colors.grey)
-                      : null,
+        padding: const EdgeInsets.all(30),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                const Text(
+                  'Sign Up',
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
-              ),
-              const SizedBox(height: 15),
-              const Text('Tap to add profile picture',
-                  style: TextStyle(color: Colors.grey)),
-              const SizedBox(height: 30),
-
-              // Full Name Field
-              TextFormField(
-                controller: _fullName,
-                decoration: const InputDecoration(
-                  hintText: 'Full Name',
-                  contentPadding: EdgeInsets.symmetric(horizontal: 15),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                const SizedBox(height: 20),
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: _profileImage != null
+                        ? FileImage(_profileImage!)
+                        : const AssetImage('assets/images/defaultphoto.jpg')
+                            as ImageProvider,
+                    child: _profileImage == null
+                        ? const Icon(Icons.camera_alt, size: 30)
+                        : null,
                   ),
                 ),
-                validator: (value) =>
-                    value?.isEmpty ?? true ? 'Full name is required' : null,
-              ),
-              const SizedBox(height: 20),
-
-              // Email Field
-              TextFormField(
-                controller: _email,
-                decoration: const InputDecoration(
-                  hintText: 'Enter Email',
-                  contentPadding: EdgeInsets.symmetric(horizontal: 15),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
-                ),
-                validator: _validateEmail,
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 20),
-
-              // Password Field with Toggle
-              TextFormField(
-                controller: _password,
-                obscureText: !_isPasswordVisible,
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 15),
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: Colors.grey,
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _fullNameController,
+                  decoration: InputDecoration(
+                    labelText: 'Full Name',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
                   ),
+                  validator: _validateFullName,
                 ),
-                validator: _validatePassword,
-              ),
-              const SizedBox(height: 20),
-
-              // Confirm Password Field with Toggle
-              TextFormField(
-                controller: _confirmPassword,
-                obscureText: !_isConfirmPasswordVisible,
-                decoration: InputDecoration(
-                  hintText: 'Confirm Password',
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 15),
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isConfirmPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: Colors.grey,
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                      });
-                    },
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
                   ),
+                  validator: _validateEmail,
                 ),
-                validator: (value) =>
-                    value != _password.text ? 'Passwords do not match' : null,
-              ),
-              const SizedBox(height: 30),
-
-              // Sign Up Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _handleSignup,
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
+                  ),
+                  obscureText: true,
+                  validator: _validatePassword,
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _confirmPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Confirm Password',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
+                  ),
+                  obscureText: true,
+                  validator: _validateConfirmPassword,
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _handleEmailSignup,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    minimumSize: const Size(double.infinity, 50),
                   ),
                   child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('CREATE ACCOUNT',
-                          style: TextStyle(fontSize: 16, color: Colors.white)),
+                      ? const CircularProgressIndicator(
+                          color: Colors.white,
+                        )
+                      : const Text('Sign Up with Email'),
                 ),
-              ),
-            ],
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _handleGoogleSignup,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  child: const Text('Sign Up with Google'),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const SigninPage()));
+                  },
+                  child: const Text("Already have an account? Sign in here"),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _siginText(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 30),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Do you have an account? ',
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
-          ),
-          TextButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SigninPage()),
-                );
-              },
-              child: const Text('Sign In'))
-        ],
       ),
     );
   }

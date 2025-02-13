@@ -4,9 +4,8 @@ import 'package:smoothie_plays_mobile/common/mode/is_dark_mode.dart';
 import 'package:smoothie_plays_mobile/common/widgets/button/basic_app_button.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/assets/app_vectors.dart';
 import 'package:smoothie_plays_mobile/core/configs%20/theme/app_colors.dart';
-import 'package:smoothie_plays_mobile/data/models/auth/auth_api_model.dart';
+import 'package:smoothie_plays_mobile/presentation/auth/pages/signin.dart';
 import 'package:smoothie_plays_mobile/presentation/auth/pages/signup.dart';
-import 'package:smoothie_plays_mobile/presentation/home/pages/home.dart';
 
 import '../../../common/widgets/appbar/app_bar.dart';
 
@@ -84,11 +83,7 @@ class SignupOrSigninPage extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                         builder: (BuildContext context) =>
-                                            HomePage(
-                                                user: AuthApiModel(
-                                                    email: '',
-                                                    fullName: 'fullName',
-                                                    photo: "photo"))));
+                                            SigninPage()));
                               },
                               child: Text(
                                 'Sign in',
