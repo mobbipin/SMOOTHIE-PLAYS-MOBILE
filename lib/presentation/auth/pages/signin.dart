@@ -4,11 +4,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:smoothie_plays_mobile/core/configs%20/assets/app_vectors.dart';
 import 'package:smoothie_plays_mobile/data/datasources/remote/auth_remote_datasource.dart';
+import 'package:smoothie_plays_mobile/data/models/auth/auth_api_model.dart';
 import 'package:smoothie_plays_mobile/data/repository/auth_remote_repository_impl.dart';
 import 'package:smoothie_plays_mobile/domain/entities/auth/auth_entity.dart';
 import 'package:smoothie_plays_mobile/domain/usecases/auth/goog_auth_usecase.dart';
 import 'package:smoothie_plays_mobile/domain/usecases/auth/login_usecase.dart';
 import 'package:smoothie_plays_mobile/presentation/auth/pages/signup.dart';
+import 'package:smoothie_plays_mobile/presentation/home/pages/home.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({Key? key}) : super(key: key);
@@ -47,11 +49,23 @@ class _SigninPageState extends State<SigninPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
+      // Convert AuthEntity to AuthApiModel
+      final authApiModel = AuthApiModel.fromJson(authEntity.toJson());
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('Login successful, Welcome ${authEntity.fullName}')),
+          content: Text('Login successful, Welcome ${authEntity.fullName}'),
+        ),
       );
-      // TODO: Navigate to your Home page.
+
+      // Navigate to HomePage with AuthApiModel
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => HomePage(user: authApiModel),
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -80,12 +94,24 @@ class _SigninPageState extends State<SigninPage> {
         email: email,
         imageUrl: imageUrl,
       );
+
+      // Convert AuthEntity to AuthApiModel
+      final authApiModel = AuthApiModel.fromJson(authEntity.toJson());
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-                'Google Login successful, Welcome ${authEntity.fullName}')),
+          content:
+              Text('Google Login successful, Welcome ${authEntity.fullName}'),
+        ),
       );
-      // TODO: Navigate to your Home page.
+
+      // Navigate to HomePage with AuthApiModel
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => HomePage(user: authApiModel), // Pass AuthApiModel
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

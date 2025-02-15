@@ -11,17 +11,18 @@ class RemoteSongDataSource {
   Future<List<SongApiModel>> fetchSongs() async {
     final response = await http.get(Uri.parse('$baseUrl/songs'));
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
+      final decoded = json.decode(response.body);
+
+      final List<dynamic> data =
+          decoded is List ? decoded : decoded["songs"] ?? [];
       return data.map((json) => SongApiModel.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load songs');
     }
   }
 
-  Future<SongApiModel> createSong(
-    Map<String, dynamic> songData, {
-    required List<http.MultipartFile> files,
-  }) async {
+  Future<SongApiModel> createSong(Map<String, dynamic> songData,
+      {required List<http.MultipartFile> files}) async {
     final uri = Uri.parse('$baseUrl/admin/songs');
     var request = http.MultipartRequest('POST', uri);
     songData.forEach((key, value) {
@@ -37,11 +38,8 @@ class RemoteSongDataSource {
     }
   }
 
-  Future<void> updateSong(
-    String id,
-    Map<String, dynamic> songData, {
-    List<http.MultipartFile>? files,
-  }) async {
+  Future<void> updateSong(String id, Map<String, dynamic> songData,
+      {List<http.MultipartFile>? files}) async {
     final uri = Uri.parse('$baseUrl/admin/songs/$id');
     var request = http.MultipartRequest('PUT', uri);
     songData.forEach((key, value) {

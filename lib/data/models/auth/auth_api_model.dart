@@ -15,11 +15,11 @@ class AuthApiModel {
 
   factory AuthApiModel.fromJson(Map<String, dynamic> json) {
     return AuthApiModel(
-      userId: json['user']['userId'],
-      fullName: json['user']['fullName'],
-      email: json['user']['email'],
-      imageUrl: json['user']['imageUrl'],
-      token: json['token'],
+      userId: json['user']['userId'] as String,
+      fullName: json['user']['fullName'] as String,
+      email: json['user']['email'] as String,
+      imageUrl: json['user']['imageUrl'] as String,
+      token: json['token'] as String,
     );
   }
 }

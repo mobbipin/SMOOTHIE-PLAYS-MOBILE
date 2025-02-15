@@ -15,23 +15,16 @@ class SongRemoteRepositoryImpl implements SongRepository {
   }
 
   @override
-  Future<Song> createSong(
-    Map<String, dynamic> songData, {
-    required List<dynamic> files,
-  }) async {
-    final songApiModel = await remoteSongDataSource.createSong(
-      songData,
-      files: files.cast(),
-    );
+  Future<Song> createSong(Map<String, dynamic> songData,
+      {required List<dynamic> files}) async {
+    final songApiModel =
+        await remoteSongDataSource.createSong(songData, files: files.cast());
     return songApiModel.toEntity();
   }
 
   @override
-  Future<void> updateSong(
-    String id,
-    Map<String, dynamic> songData, {
-    List<dynamic>? files,
-  }) async {
+  Future<void> updateSong(String id, Map<String, dynamic> songData,
+      {List<dynamic>? files}) async {
     await remoteSongDataSource.updateSong(id, songData, files: files?.cast());
   }
 
