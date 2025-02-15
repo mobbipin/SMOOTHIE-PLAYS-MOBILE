@@ -18,8 +18,8 @@ class SongRemoteRepositoryImpl implements SongRepository {
               artist: model.artist ?? 'Unknown Artist',
               audioUrl: model.audioUrl ?? '',
               imageUrl: model.imageUrl ?? '',
-              duration: model.duration ?? 0, // Use 0 if null
-              albumId: model.albumId, // Assuming albumId can be null
+              duration: model.duration ?? 0, // defaults to 0 if null
+              albumId: model.albumId, // if albumId is nullable, that's fine
             ))
         .toList();
   }
@@ -27,15 +27,18 @@ class SongRemoteRepositoryImpl implements SongRepository {
   @override
   Future<SongEntity> createSong(Map<String, dynamic> songData,
       {http.MultipartFile? audioFile, http.MultipartFile? imageFile}) async {
-    final model = await remoteDataSource.createSong(songData,
-        audioFile: audioFile, imageFile: imageFile);
+    final model = await remoteDataSource.createSong(
+      songData,
+      audioFile: audioFile,
+      imageFile: imageFile,
+    );
     return SongEntity(
-      id: model.id,
-      title: model.title,
-      artist: model.artist,
-      audioUrl: model.audioUrl,
-      imageUrl: model.imageUrl,
-      duration: model.duration,
+      id: model.id ?? '',
+      title: model.title ?? 'Unknown Title',
+      artist: model.artist ?? 'Unknown Artist',
+      audioUrl: model.audioUrl ?? '',
+      imageUrl: model.imageUrl ?? '',
+      duration: model.duration ?? 0,
       albumId: model.albumId,
     );
   }
