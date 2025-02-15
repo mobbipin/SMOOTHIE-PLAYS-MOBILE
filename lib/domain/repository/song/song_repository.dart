@@ -1,11 +1,10 @@
-import 'package:http/http.dart' as http;
 import 'package:smoothie_plays_mobile/domain/entities/song/song_entity.dart';
 
 abstract class SongRepository {
-  Future<List<SongEntity>> fetchSongs();
-  Future<SongEntity> createSong(
-    Map<String, dynamic> songData, {
-    http.MultipartFile? audioFile,
-    http.MultipartFile? imageFile,
-  });
+  Future<List<Song>> getSongs();
+  Future<Song> createSong(Map<String, dynamic> songData,
+      {required List<dynamic> files});
+  Future<void> updateSong(String id, Map<String, dynamic> songData,
+      {List<dynamic>? files});
+  Future<void> deleteSong(String id);
 }
